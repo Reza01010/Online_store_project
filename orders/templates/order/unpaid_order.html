@@ -1,0 +1,62 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+    {% load crispy_forms_tags %}
+    {% load comment_tags %}
+    {% load i18n %}
+{% load jalali_tags %}
+{% load humanize %}
+
+
+    <div class="container my-5">
+        {% for order_unpaid in order_unpaid_id %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Order {{ order_unpaid.id }}</h5>
+                    <a type="button" href="{% url 'order_delete' order_unpaid.id %}" class="btn-outline-danger waves-effect">Delete</a>
+                <h1></h1>
+                    <a type="submit" href="{% url 'order_continue' order_unpaid.id %}" class="mini-cart-btn btn-outline-info">Continue</a>
+
+
+            </div>
+            <div class="card-body">
+                <h3 class="card-text">price : {% translate 'Toman' %} {{ order_unpaid.get_total_price|intcomma:False|trans_number }}</h3>
+                <p class="card-text">Payment Status: {{ order_unpaid.is_paid }}</p>
+                <p class="card-text">Created at: {{ order_unpaid.datetime_created }}</p>
+                <hr>
+                {% if order_unpaid.items.all %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order_unpaid.items.all %}
+                                <tr>
+                                    <td>{{ item.products.title }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.price|intcomma:False|trans_number  }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>No items found for this order.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

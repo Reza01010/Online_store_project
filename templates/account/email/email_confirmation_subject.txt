@@ -1,0 +1,4 @@
+{% load i18n %}
+{% autoescape off %}
+{% blocktrans %}(((((((((_________________________))))))))))Please config email{% endblocktrans %}
+{% endautoescape %}

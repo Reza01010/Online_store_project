@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+{% block title %}
+    list fa
+{% endblock %}
+{% block content %}
+        <!-- Mini Cart Start -->
+        {% include 'cart/cart_sidebar.html' %}
+        <!-- Mini Cart End -->
+
+{% for i in list_fe %}
+
+    <a href="{{ i.get_absolute_url }}"><p>{{i}}</p></a>
+
+
+
+{%endfor%}
+
+
+
+
+
+
+{% endblock %}

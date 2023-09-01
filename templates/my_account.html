@@ -1,0 +1,248 @@
+{% extends '_base.html' %}
+
+{% block content %}
+
+    {% load crispy_forms_tags %}
+    {% load comment_tags %}
+    {% load i18n %}
+{% load jalali_tags %}
+{% load humanize %}
+
+        <!-- Main Content Wrapper Start -->
+        <div class="main-content-wrapper">
+            <div class="page-content-inner ptb--80">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="user-dashboard-tab flex-column flex-md-row">
+                                <div class="user-dashboard-tab__head nav flex-md-column" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active" data-toggle="pill" role="tab" href="#dashboard" aria-controls="dashboard" aria-selected="true">پیشخوان</a>
+                                    <a class="nav-link" data-toggle="pill" role="tab" href="#orders" aria-controls="orders" aria-selected="true">تاریخچه سفارشات</a>
+                                    <a class="nav-link" data-toggle="pill" role="tab" href="#addresses" aria-controls="addresses" aria-selected="true">علاقه مندی ها</a>
+                                    <a class="nav-link" data-toggle="pill" role="tab" href="#accountdetails" aria-controls="accountdetails" aria-selected="true">جزئیات پروفایل</a>
+                                    
+                                    <form action="{% url 'account_logout' %}" class="nav-link" method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" class="nav-link" value="خروج">
+                                    </form>
+                                    
+                                    {% comment %} <a class="nav-link" href="login-register.html">خروج</a> {% endcomment %}
+                                </div>
+                                <div class="user-dashboard-tab__content tab-content p-4">
+                                    <div class="tab-pane fade show active" id="dashboard">
+                                        <p>سلام <strong>{{user.username}}</strong></p>
+                                        <p>از منوی این قسمت میتوانید اطلاعات خودتان را بررسی کنید.</p>
+                                    </div>
+                                    <div class="tab-pane fade" id="orders">
+                                        <div class="message-box mb--30 d-none">
+                                            <p><i class="fa fa-check-circle"></i>هنوز سفارشی ثبت نشده است.</p>
+                                            <a href="shop-sidebar.html">رفتن به فروشگاه</a>
+                                        </div>
+                                        <div class="table-content table-responsive">
+                                            <table class="table text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th>شماره سفارش</th>
+                                                        <th>تاریخ</th>
+                                                        <th>وضعیت</th>
+                                                        <th>جمع کل</th>
+                                                        {% comment %} <th>عملیات</th> {% endcomment %}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for i in order %}
+                                                {% for item in i.items.all %}
+                                                    <tr>
+                                                        <td>{{i.id}}</td>
+                                                        <td class="wide-column">{{i.datetime_created}}</td>
+                                                        <td>{{i.is_paid}}</td>
+                                                        <td class="wide-column">{{ item.price|intcomma:False|trans_number  }}<td></td></td>
+                                                        {% comment %} <td><a href="product-details.html" class="btn btn-small btn-bg-red btn-color-white btn-hover-2">نمایش</a></td> {% endcomment %}
+                                                    </tr>
+                                                {%endfor%}
+                                                {%endfor%}
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="addresses">
+                                        <div class="message-box mb--30 d-none">
+                                            <p><i class="fa fa-check-circle"></i>هنوز سفارشی ثبت نشده است.</p>
+                                            <a href="shop-sidebar.html">رفتن به فروشگاه</a>
+                                        </div>
+                                        <div class="table-content table-responsive">
+                                            <table class="table text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th>شماره</th>
+                                                        <th>نام محصول</th>
+                                                        {% comment %} <th>تاریخ علاقه مندی</th> {% endcomment %}
+                                                        <th>عملیات</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for f in list_fe %}
+                                                    <tr>
+                                                        <td>{{f.id}}</td>
+                                                        <td>{{f.title}}</td>
+                                                        {% comment %} <td class="wide-column">۲ شهریور ۱۴۰۲</td> {% endcomment %}
+                                                        <td><a href="{{f.get_absolute_url}}" class="btn btn-small btn-bg-red btn-color-white btn-hover-2">نمایش</a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="accountdetails">
+                                        <form action="{% url 'myaccount'%}" method="post" class="form form--account">
+                                            {% csrf_token %}
+                                            <div class="row grid-space-30 mb--20">
+                                                {% if not user.first_name %}
+                                                    <div class="col-md-6 mb-sm--20">
+                                                        <div class="form__group">
+                                                            <input 
+                                                              type="text" 
+                                                              id="{{ acco_form.firstname.id_for_label }}"
+                                                              name="{{ acco_form.firstname.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="firstname*">
+                                                            
+                                                            {{ acco_form.firstname.errors }}</div>
+                                                    </div>
+                                                {% else %}
+                                                <div class="col-md-6 mb-sm--20">
+                                                    <h5>{{user.first_name}}</h5>
+                                                </div>
+                                                {% endif %}
+                                                {% if not user.last_name %}
+                                                <div class="col-md-6">
+                                                    <div class="form__group">
+                                                        <input 
+                                                              type="text" 
+                                                              id="{{ acco_form.lastname.id_for_label }}"
+                                                              name="{{ acco_form.lastname.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="lastname*">
+                                                            
+                                                            {{ acco_form.lastname.errors }}</div>
+                                                </div>
+                                                {% else %}
+                                                <div class="col-md-6 mb-sm--20">
+                                                    <h5>{{user.last_name}}</h5>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="row mb--20">
+                                                {% if not user.username %}
+                                                <div class="col-12">
+                                                    <div class="form__group">
+                                                        <input 
+                                                              type="text" 
+                                                              id="{{ acco_form.username.id_for_label }}"
+                                                              name="{{ acco_form.username.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="username*">
+                                                            
+                                                            {{ acco_form.username.errors }}<span class="suggestion"><em>این نام نمایشی فقط برای نظرات شما استفاده میشود.</em></span>
+                                                    </div>
+                                                </div>
+                                                {% else %}
+                                                <div class="col-md-6 mb-sm--20">
+                                                    <h5>{{user.username}}</h5>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="row mb--20">
+                                                {% if not user.email %}
+                                                <div class="col-12">
+                                                    <div class="form__group">
+                                                        <input 
+                                                              type="text" 
+                                                              id="{{ acco_form.email.id_for_label }}"
+                                                              name="{{ acco_form.email.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="email*">
+                                                            
+                                                            {{ acco_form.email.errors }}</div>
+                                                </div>
+                                                {% else %}
+                                                <div class="col-md-6 mb-sm--20">
+                                                    <h5>{{user.email}}</h5>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            {% comment %} <div class="form__group">
+                                                <button type="submit" class="btn-submit">Submit</button>
+                                              </div> {% endcomment %}
+                                              {% if not user.first_name or user.email or user.username or user.last_name %}
+                                            <div class="form__group">
+                                                <button type="submit" class="btn-submit">Submit</button>
+                                              </div>
+                                            {% endif %}
+                                        </form>
+                                            <form action="{% url 'account_change_password' %}" method="post" class="form__fieldset mb--20">
+                                                {% csrf_token %}
+                                                <legend class="form__legend">تغییر پسورد</legend>
+                                                <div class="row mb--20">
+                                                    <div class="col-12">
+                                                        <div class="form__group mb--20">
+                                                            <input 
+                                                              type="text" 
+                                                              id="{{ form.oldpassword.id_for_label }}"
+                                                              name="{{ form.oldpassword.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="oldpassword*">
+                                                            
+                                                            {{ form.oldpassword.errors }}
+                                                          </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb--20">
+                                                    <div class="col-12">
+                                                        <div class="form__group">
+                                                            <input 
+                                                              type="text" 
+                                                              id="{{ form.password1.id_for_label }}"
+                                                              name="{{ form.password1.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="password1*">
+                                                            
+                                                            {{ form.password1.errors }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <div class="form__group">
+                                                            <input 
+                                                              type="text" 
+                                                              id="{{ form.password2.id_for_label }}"
+                                                              name="{{ form.password2.html_name }}"  
+                                                              class="form__input form__input--2"
+                                                              placeholder="password2*">
+                                                            
+                                                            {{ form.password2.errors }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="form__group">
+                                                        <input type="submit" value="ذخیره تغییرات" class="btn btn-style-1 btn-submit">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content Wrapper Start -->
+
+    {% endblock content %}
