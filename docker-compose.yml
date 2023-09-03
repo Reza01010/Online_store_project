@@ -10,6 +10,7 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - broker
     environment:
       - "DJANGO_SECRET_KEY=${DOCKER_COMPOSE_DJANGO_SECRET_KEY}"
       - "DJANGO_DEBUG=${DOCKER_COMPOSE_DJANGO_DEBUG}"
@@ -19,3 +20,17 @@ services:
     image: postgres:14
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
+  broker:
+    image: rabbitmq:3.8-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+  worker:
+    build: .
+    command: ["celery", "worker", "-l", "INFO"]
+    volumes:
+      - .:/code
+    depends_on:
+      - broker
+      - db
+    restart: always

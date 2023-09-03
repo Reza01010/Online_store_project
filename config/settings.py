@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'captcha',
 
+    
+
         #local apps
     'accounts',
     'pages.apps.PagesConfig',
@@ -206,3 +208,9 @@ MESSAGE_TAGS = {
 
 
 ZARINPAL_MERCHANT_ID = env('DJANGO_ZARINPAL_MERCHANT_ID')
+
+
+
+
+CELERY_BROKER_URL = 'amqp://guest:guest@:5672//'
+CELERY_RESULT_BACKEND = 'rpc://'
