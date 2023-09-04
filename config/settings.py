@@ -57,6 +57,11 @@ INSTALLED_APPS = [
     'ckeditor',
     'captcha',
 
+
+
+    'celery',
+    'rabbitmq',
+
     
 
         #local apps
@@ -212,5 +217,5 @@ ZARINPAL_MERCHANT_ID = env('DJANGO_ZARINPAL_MERCHANT_ID')
 
 
 
-CELERY_BROKER_URL = 'amqp://guest:guest@:5672//'
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbit:5672//'
 CELERY_RESULT_BACKEND = 'rpc://'

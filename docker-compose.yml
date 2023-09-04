@@ -21,16 +21,17 @@ services:
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
   broker:
+    hostname: rabbit
     image: rabbitmq:3.8-management
     ports:
       - 15672:15672
       - 5672:5672
   worker:
     build: .
-    command: ["celery", "worker", "-l", "INFO"]
+    command: ["celery","-A","config", "worker", "-l", "INFO"]
     volumes:
       - .:/code
     depends_on:
       - broker
       - db
-    restart: always
+    
