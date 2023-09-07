@@ -20,13 +20,41 @@ from .forms import CommentForms, ContactForms
 from cart.forms import AddToCartProductForm
 
 
+from django.db.models import Q
+from .forms import SearchForm
 
+
+def search_view(request):
+    form = SearchForm(request.GET)
+    products = Product.objects.none() 
+    if form.is_valid():
+        query = form.cleaned_data['query']
+    
+        if query:
+            products = Product.objects.filter(Q(title__icontains=query) | Q(description__icontains=query))
+            
+        else:
+            products = Product.objects.none()
+            
+
+    context = {
+        'form': form,
+        'products_': products,
+    }
+    print(products,"0"*100)
+    return render(request, 'serch.html', context)
 
 class ProductListView(generic.ListView):
     # model = Product
     queryset = Product.objects.filter(active=True)
     template_name = 'products/product_list.html'
     context_object_name = 'products'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['_form'] = SearchForm()
+        
+        return context
 
 
 class ProductDetailView(generic.DetailView):

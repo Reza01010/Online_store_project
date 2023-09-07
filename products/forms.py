@@ -13,3 +13,5 @@ class ContactForms(forms.ModelForm):
         model = Contact_us
         fields = ['name', 'email', 'phone_number', 'mesej',]
 
+class SearchForm(forms.Form):
+    query = forms.CharField(label='Search')

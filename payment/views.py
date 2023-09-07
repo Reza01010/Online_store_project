@@ -6,6 +6,7 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse
 
+from cart.tasks import send_order_confirmation_email
 from orders.models import Order
 
 
@@ -177,16 +178,20 @@ def payment_callback_sandbox(request):
                 order.zarinpal_ref_id = data['RefID']
                 order.zarinpal_data = data
                 order.save()
-
+                
+                send_order_confirmation_email.delay(email=request.user.email,text='پرداخت با موفقیت انجام شد.')
                 return HttpResponse('پرداخت با موفقیت انجام شد.')
+                
             elif payment_code ==101:
                 return HttpResponse('پرداخت با موفقیت انجام شد. البته این تراکنش قبلا ثبت شده!')
 
             else:
                 error_code = res.json()['errors']['code']
                 error_message = res.json()['errors']['message']
+                send_order_confirmation_email.delay(email=request.user.email,text=f'تراکنش ناموفق بود.  {error_code}     {error_message}')
                 return HttpResponse(f'تراکنش ناموفق بود.  {error_code}     {error_message}')
     else:
+        send_order_confirmation_email.delay(email=request.user.email,text='تراکنش ناموفق بود.')
         return HttpResponse('تراکنش ناموفق بود.')
 
 

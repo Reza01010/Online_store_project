@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+{% block title %}
+    list fa
+{% endblock %}
+{% block content %}
+
+
+<!-- search.html -->
+
+<form method="GET" action="{% url 'search' %}">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Search</button>
+  </form>
+  
+  {% if products_ %}
+    <h2>Search Results</h2>
+    <ul>
+      {% for product in products_ %}
+        <li>{{ product.title }}<h4>    ------------ </h4><img class="m-auto" style="max-height: 400px;"
+            src="{{ product.image.url }}"
+            alt=""></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No results found.</p>
+  {% endif %}
+
+  {% endblock %}
