@@ -74,3 +74,12 @@ def order_continue_view(request, pk):
     get_object_or_404(Order, pk=pk)
     request.session['order_id'] = pk
     return redirect('payment:payment_process_sandbox')
+
+
+
+
+
+
+
+
+

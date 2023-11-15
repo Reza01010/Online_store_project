@@ -44,6 +44,7 @@ def search_view(request):
     print(products,"0"*100)
     return render(request, 'serch.html', context)
 
+
 class ProductListView(generic.ListView):
     # model = Product
     queryset = Product.objects.filter(active=True)
@@ -176,7 +177,7 @@ def my_account_view(request):
             request.user.save()
     if request.user.is_authenticated:
         favorite_ = request.user.favorites.all()
-    o = Order.objects.filter(user=request.user)
+    o = Order.objects.prefetch_related("items").filter(user=request.user)
     
     return render(request, 'my_account.html', context={'list_fe':favorite_,'order':o, 'form':form,"acco_form":acco_form})
 

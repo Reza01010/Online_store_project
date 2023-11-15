@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
 
     # third party apps
+
+    'debug_toolbar',
     'jalali_date',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -75,6 +77,11 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -86,6 +93,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -117,7 +125,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+def show_toolbar(request):
+    return True
 
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
